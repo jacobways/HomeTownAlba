@@ -5,7 +5,7 @@ import "./Map.css";
 import NavBar from "../components/NavBar";
 
 const { kakao } = window;
-export default function Map() {
+export default function Map({guestApplyStatus, guestApplyStatusHandler}) {
   const [jobSeekerId, setJobSeekerId] = useState(0);
   const [Login, setLogin] = useState(false);
   const [applyLocation, setApplyLocation] = useState([]); // 지원시 해당 위치를 지도에 띄우도록 하기 위한 state
@@ -199,6 +199,15 @@ export default function Map() {
           return res;
         }
       })
+      .then((res)=>{
+        if (jobSeekerId===0) {
+          return res;
+        } else {
+          return res.filter((job)=>{
+            return job.companyId !== 0
+          })
+        }
+      })
       .then((data) => {
         setFilteredData(data);
         //-------------------- 지도 생성 (필수)
@@ -349,6 +358,10 @@ export default function Map() {
                       .catch();
                   }
 
+                  const ChangeGuestApplyStatus = () => {
+                    guestApplyStatusHandler();
+                  }
+
                   // 지원을 요청하는 핸들러 제작
                   function ApplyJob() {
                     axios
@@ -366,6 +379,18 @@ export default function Map() {
                           parseFloat(result[0].y),
                           parseFloat(result[0].x),
                         ]);
+                        return res;
+                      })
+                      .then((res)=>{
+                        if(jobSeekerId===0) {
+                          setTimeout(()=>{
+                            console.log('res.data.id', res.data.id)
+                            axios.delete(`${process.env.REACT_APP_SERVER_URL}/applicant/${res.data.id}`, {withCredentials: true})
+                            .then((res)=>{
+                              ChangeGuestApplyStatus();
+                            })
+                          }, 300000)
+                        }
                       })
                       .catch();
                   }
@@ -524,7 +549,11 @@ export default function Map() {
                         image: markerImage, // 마커 이미지
                       });
 
+                      if (jobSeekerId===0) {
+                        MakeMarkerEvent(marker, "지원 승인됨(회원만 채팅가능)");
+                      } else {
                       MakeMarkerEvent(marker, "지원 승인됨(채팅창 열기)");
+                      }
                     }
                   } else {
                     // 지원하지 않은 일자리의 경우 마커 생성
@@ -551,9 +580,10 @@ export default function Map() {
     endTimeFilter,
     minWageFilter,
     maxWageFilter,
+    guestApplyStatus
   ]);
   return (
-    <>
+    <div className="map-container">
       <NavBar />
       <div className="search-filter-container">
         {isOpenList ? (
@@ -650,14 +680,7 @@ export default function Map() {
         </label>
       </div>
 
-      <div
-        id="map"
-        style={{
-          width: "100%",
-          height: "80%",
-          overflow: "visible",
-        }}
-      ></div>
-    </>
+      <div id="map"></div> 
+    </div>
   );
 }

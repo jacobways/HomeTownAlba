@@ -198,7 +198,7 @@ export default function CompanyMyPage() {
 
   // job 정보 생성 및 수정용
 
-  // company 사업자 위치 수정창 오픈
+  // Job 위치 수정창 오픈
   const OpenJobPost = () => {
     setIsOpenJobPost(!isOpenJobPost);
   };
@@ -372,8 +372,20 @@ export default function CompanyMyPage() {
       { params: { jobId } },
       { withCredentials: true }
     )
-    .then((res)=>{ 
-      // 지원자에게 메일이 발송된 이후에 해당 Job을 삭제하기
+    .then((res)=>{
+      // Applicant를 삭제 후 해당 Job을 삭제하기 (Applicant 메일 발송 시 Job 정보가 필요하기 때문)
+      axios
+      .delete(`${process.env.REACT_APP_SERVER_URL}/job/${jobId}`, { withCredentials: true })
+      .then((res) => {
+        setEventStatus(!eventStatus);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+    })
+    .catch((err)=>{
+      console.log(err)
+      // 삭제할 applicant가 없을 때 해당 Job을 삭제하기 (Applicant 메일 발송 시 Job 정보가 필요하기 때문)
       axios
       .delete(`${process.env.REACT_APP_SERVER_URL}/job/${jobId}`, { withCredentials: true })
       .then((res) => {
@@ -398,6 +410,8 @@ export default function CompanyMyPage() {
       })
       .then((res) => {
         // bracket notation으로는 값이 저장되지 않아 구조분해할당 사용
+        console.log('res.data----', res.data)
+        console.log('res.data.data----', res.data.data)
         console.log('res.data.applyStatus----', res.data.applyStatus)
         if (res.data.data.length !== 0) {
           setApplicantList({ ...applicantList, [idx]: res.data.data });
@@ -586,25 +600,23 @@ export default function CompanyMyPage() {
           ) : null}
         </label>
         <label>
-          {" "}
           근무 요일 :
           <input name="day" id="mon" type="checkbox" onClick={monHandler} />
           월
           <input name="day" id="tue" type="checkbox" onClick={tueHandler} />
           화
           <input name="day" id="wed" type="checkbox" onClick={wedHandler} />
-          <label for="wed">수</label>
+          수
           <input name="day" id="thu" type="checkbox" onClick={thuHandler} />
-          <label for="thu">목</label>
+          목
           <input name="day" id="fri" type="checkbox" onClick={friHandler} />
-          <label for="fri">금</label>
+          금
           <input name="day" id="sat" type="checkbox" onClick={satHandler} />
-          <label for="sat">토</label>
+          토
           <input name="day" id="sun" type="checkbox" onClick={sunHandler} />
-          <label for="sun">일</label>
+          일
         </label>
         <label>
-          {" "}
           근무 시간 :
           <input
             name="startTime"

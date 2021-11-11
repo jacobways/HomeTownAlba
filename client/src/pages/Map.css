@@ -1,3 +1,8 @@
+#map{
+  width:100%;
+ height:calc(100% - 220px);
+ }
+
 .search-filter-container {
   background-color: #fff;
   border-bottom: 1px solid rgb(205, 205, 205);
@@ -82,4 +87,12 @@ input {
   overflow-y: hidden;
   border-right: 1px solid rgb(231, 231, 231);
   background-color: #fff;
+  z-index: 2;
+}
+
+.map-container {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  position: absolute;
 }

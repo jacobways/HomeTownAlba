@@ -48,6 +48,26 @@ function LoginPage(props) {
       }
     });
   };
+  const enterTest = (e) => {
+    console.log('e', e)
+    e.preventDefault();
+    
+    if(e.key === 'Enter') {
+      e.preventDefault();
+      let submitData = {
+        userId: Id,
+        password: Password,
+      };
+      //   redux
+      dispatch(loginJobSeeker(submitData)).then((res) => {
+        if (res.payload.loginSuccess) {
+          props.history.push("/");
+        } else {
+          alert("로그인에 실패하였습니다.");
+        }
+      });
+    }
+  };
   const CompanySubmitHandler = (e) => {
     console.log("사업자 로그인");
     // redux

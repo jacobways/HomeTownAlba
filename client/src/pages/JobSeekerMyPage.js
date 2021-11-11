@@ -47,8 +47,6 @@ export default function JobSeekerMyPage() {
 
   const [resultList, setResultList] = useState([]);  // 지원 결과가 나온 job 목록 보여주기
   const [statusList, setStatusList] = useState([]);  // 지원 결과의 상태 보여주기
-  console.log('resultList', resultList)
-  console.log('statusList', statusList)
 
   const [eventStatus, setEventStatus] = useState(false); // useEffect로 변경사항이 화면에 바로 렌더링되게 도와주는 state
 
